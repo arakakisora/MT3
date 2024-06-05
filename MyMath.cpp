@@ -55,7 +55,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale)
 
 }
 
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
+Vector3 TransformVector3(const Vector3& vector, const Matrix4x4& matrix)
 {
 
 	Vector3 ans;
@@ -415,4 +415,89 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2)
 	ans.z = v1.x * v2.y - v1.y * v2.x;
 
 	return ans;
+}
+
+void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
+{
+	const float kGridHalfWidth = 2.0f;
+	const uint32_t kSubdivision = 10;
+	const float kGridEvery = (kGridHalfWidth * 2.0f) / float(kSubdivision);
+	//奥から手前への線を順番に引いていく
+	for (uint32_t xIndex = 0; xIndex <= kSubdivision; ++xIndex) {
+		float x = -kGridHalfWidth + (xIndex * kGridEvery);
+		unsigned int color = 0xAAAAAAFF;
+		Vector3 start{ x,0.0f,-kGridHalfWidth };
+		Vector3 end{ x,0.0f,kGridHalfWidth };
+
+		Vector3 startScreen = TransformVector3(TransformVector3(start, viewProjectionMatrix), viewportMatrix);
+		Vector3 endScreen = TransformVector3(TransformVector3(end, viewProjectionMatrix), viewportMatrix);
+
+		if (x == 0.0f) {
+			color = BLACK;
+		}
+		Novice::DrawLine(int(startScreen.x), int(startScreen.y), int(endScreen.x), int(endScreen.y), color);
+
+	}
+
+	for (uint32_t zIndex = 0; zIndex <= kSubdivision; ++zIndex) {
+		float z = -kGridHalfWidth + (zIndex * kGridEvery);
+		unsigned int color = 0xAAAAAAFF;
+		Vector3 start{ -kGridHalfWidth,0.0f,z };
+		Vector3 end{ kGridHalfWidth,0.0f,z };
+
+		Vector3 startScreen = TransformVector3(TransformVector3(start, viewProjectionMatrix), viewportMatrix);
+		Vector3 endScreen = TransformVector3(TransformVector3(end, viewProjectionMatrix), viewportMatrix);
+
+		if (z == 0.0f) {
+			color = BLACK;
+		}
+		Novice::DrawLine(int(startScreen.x), int(startScreen.y), int(endScreen.x), int(endScreen.y), color);
+
+	}
+
+}
+
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	const uint32_t kSbdivision = 20;
+	const float kLonEvery = 2*std::numbers::pi_v<float> / kSbdivision;
+	const float KLatEvery = std::numbers::pi_v<float> / kSbdivision;
+
+	for (uint32_t latIndex = 0; latIndex < kSbdivision; ++latIndex) {
+		float lat = -std::numbers::pi_v<float> / 2.0f + KLatEvery * latIndex;
+		for (uint32_t lonIndex = 0; lonIndex < kSbdivision; ++lonIndex) {
+
+			float lon = lonIndex * kLonEvery;
+			Vector3 a = {
+				sphere.radius * std::cosf(lat) * std::cosf(lon) + sphere.centor.x,
+				sphere.radius * std::sinf(lat) + sphere.centor.y,
+				sphere.radius * std::cosf(lat) * std::sinf(lon) + sphere.centor.z
+			};
+
+			Vector3 b = {
+				sphere.radius * std::cosf(lat + KLatEvery) * std::cosf(lon) + sphere.centor.x,
+				sphere.radius * std::sinf(lat + KLatEvery) + sphere.centor.y,
+				sphere.radius * std::cosf(lat + KLatEvery) * std::sinf(lon) + sphere.centor.z
+			};
+
+			Vector3 c = {
+				sphere.radius * std::cosf(lat) * std::cosf(lon + kLonEvery) + sphere.centor.x,
+				sphere.radius * std::sinf(lat) + sphere.centor.y,
+				sphere.radius * std::cosf(lat) * std::sinf(lon + kLonEvery) + sphere.centor.z
+			};
+
+
+
+			Vector3 aScreen = TransformVector3(TransformVector3(a, viewProjectionMatrix), viewportMatrix);
+			Vector3 bScreen = TransformVector3(TransformVector3(b, viewProjectionMatrix), viewportMatrix);
+			Vector3 cScreen = TransformVector3(TransformVector3(c, viewProjectionMatrix), viewportMatrix);
+			
+			Novice::DrawLine(int(aScreen.x), int(aScreen.y), int(bScreen.x), int(bScreen.y), color);
+			Novice::DrawLine(int(aScreen.x), int(aScreen.y), int(cScreen.x), int(cScreen.y), color);
+
+
+		}
+
+
+	}
 }

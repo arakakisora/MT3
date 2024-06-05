@@ -6,14 +6,24 @@
 #include <Novice.h>
 #include <cmath>
 #include <stdio.h>
+#include <numbers>
 
+struct Transform {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+};
+struct Sphere {
+	Vector3 centor;
+	float radius;
 
+};
 //回転
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 //拡大
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 //同時座標変換
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+Vector3 TransformVector3(const Vector3& vector, const Matrix4x4& matrix);
 
 //回転X
 Matrix4x4 MakeRotateXMatrix(float radian);
@@ -47,3 +57,6 @@ Matrix4x4 MekeIdentity4x4();
 
 //クロス積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
