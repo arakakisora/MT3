@@ -16,7 +16,21 @@ struct Transform {
 struct Sphere {
 	Vector3 centor;
 	float radius;
+};
 
+struct Line {
+	Vector3 origin;
+	Vector3 diff;
+};
+
+struct Ray {
+	Vector3 origin;
+	Vector3 diff;
+};
+
+struct Segment {
+	Vector3 origin;
+	Vector3 diff;
 };
 //回転
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
@@ -43,6 +57,7 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix);
 Matrix4x4 Add(const Matrix4x4& mt1, const Matrix4x4& mt2);
 //引き算
 Matrix4x4 Subtract(const Matrix4x4& mt1, const Matrix4x4& mt2);
+Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
 //掛け算
 Matrix4x4 Multiply(const Matrix4x4& mt1, const Matrix4x4& mt2);
@@ -58,5 +73,15 @@ Matrix4x4 MekeIdentity4x4();
 //クロス積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
+float Dot(const Vector3& v1, const Vector3& v2);
+
+
+float Lenght(const Vector3& v);
+
+Vector3 Normaraize(const Vector3& v);
+
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
+Vector3 Project(const Vector3& v1, const Vector3& v2);
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment);

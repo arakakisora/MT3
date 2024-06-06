@@ -255,6 +255,20 @@ Matrix4x4 Subtract(const Matrix4x4& mt1, const Matrix4x4& mt2)
 
 }
 
+Vector3 Subtract(const Vector3& v1, const Vector3& v2)
+{
+
+	Vector3 ans;
+
+	ans.x = v1.x - v2.x;
+	ans.y = v1.y - v2.y;
+	ans.z = v1.z - v2.z;
+
+	return ans;
+
+
+}
+
 Matrix4x4 Multiply(const Matrix4x4& mt1, const Matrix4x4& mt2)
 {
 
@@ -417,6 +431,33 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2)
 	return ans;
 }
 
+float Dot(const Vector3& v1, const Vector3& v2)
+{
+	float ans;
+
+	ans = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	return ans;
+}
+
+float Lenght(const Vector3& v)
+{
+	float ans;
+
+	ans = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+	return ans;
+}
+
+Vector3 Normaraize(const Vector3& v)
+{
+	Vector3 ans;
+	float lenght;
+	lenght = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+	ans.x = v.x / lenght;
+	ans.y = v.y / lenght;
+	ans.z = v.z / lenght;
+	return ans;
+}
+
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
 {
 	const float kGridHalfWidth = 2.0f;
@@ -460,7 +501,7 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
 {
 	const uint32_t kSbdivision = 20;
-	const float kLonEvery = 2*std::numbers::pi_v<float> / kSbdivision;
+	const float kLonEvery = 2 * std::numbers::pi_v<float> / kSbdivision;
 	const float KLatEvery = std::numbers::pi_v<float> / kSbdivision;
 
 	for (uint32_t latIndex = 0; latIndex < kSbdivision; ++latIndex) {
@@ -491,7 +532,7 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 			Vector3 aScreen = TransformVector3(TransformVector3(a, viewProjectionMatrix), viewportMatrix);
 			Vector3 bScreen = TransformVector3(TransformVector3(b, viewProjectionMatrix), viewportMatrix);
 			Vector3 cScreen = TransformVector3(TransformVector3(c, viewProjectionMatrix), viewportMatrix);
-			
+
 			Novice::DrawLine(int(aScreen.x), int(aScreen.y), int(bScreen.x), int(bScreen.y), color);
 			Novice::DrawLine(int(aScreen.x), int(aScreen.y), int(cScreen.x), int(cScreen.y), color);
 
@@ -500,4 +541,22 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 
 	}
+}
+
+Vector3 Project(const Vector3& v1, const Vector3& v2)
+{
+	float t = Dot(v1, v2) / (Lenght(v2) * Lenght(v2));
+	Vector3 tb = { v2.x * t,v2.y * t,v2.z * t };
+	return tb;
+}
+
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
+{
+	Vector3 tb = Project(Subtract(point, segment.origin), segment.diff);
+	Vector3 cp = {
+	point.x + tb.x,
+	point.y + tb.y,
+	point.z + tb.z
+	};
+	return cp;
 }
