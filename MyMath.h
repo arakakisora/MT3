@@ -7,6 +7,7 @@
 #include <cmath>
 #include <stdio.h>
 #include <numbers>
+#include <algorithm>
 
 struct Transform {
 	Vector3 scale;
@@ -55,6 +56,7 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix);
 
 //足し算
 Matrix4x4 Add(const Matrix4x4& mt1, const Matrix4x4& mt2);
+Vector3 Add(const Vector3& v1, const Vector3& v2);
 //引き算
 Matrix4x4 Subtract(const Matrix4x4& mt1, const Matrix4x4& mt2);
 Vector3 Subtract(const Vector3& v1, const Vector3& v2);
