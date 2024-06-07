@@ -239,7 +239,7 @@ Vector3 Add(const Vector3& v1, const Vector3& v2)
 
 Matrix4x4 Subtract(const Matrix4x4& mt1, const Matrix4x4& mt2)
 {
-	
+
 	Matrix4x4 ans;
 
 	ans.m[0][0] = mt1.m[0][0] - mt2.m[0][0];
@@ -453,7 +453,7 @@ float Dot(const Vector3& v1, const Vector3& v2)
 	return ans;
 }
 
-float Lenght(const Vector3& v)
+float Length(const Vector3& v)
 {
 	float ans;
 
@@ -559,7 +559,7 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 Vector3 Project(const Vector3& v1, const Vector3& v2)
 {
-	float t = Dot(v1, v2) / Dot(v2,v2);
+	float t = Dot(v1, v2) / Dot(v2, v2);
 	Vector3 tb = { v2.x * t,v2.y * t,v2.z * t };
 	return tb;
 }
@@ -567,13 +567,21 @@ Vector3 Project(const Vector3& v1, const Vector3& v2)
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 {
 	Vector3 v = Subtract(point, segment.origin);
-
 	float t = Dot(v, segment.diff) / Dot(segment.diff, segment.diff);
-
 	t = std::clamp(t, 0.0f, 1.0f);
 
 	Vector3 tb = { t * segment.diff.x, t * segment.diff.y,t * segment.diff.z };
-
-
 	return Add(segment.origin, tb);
 }
+
+bool IsCollision(const Sphere& s1, const Sphere& s2)
+{
+	float distance = Length(Subtract(s2.centor, s1.centor));
+
+	if (distance <= s1.radius + s2.radius) { return true; };
+
+	return false;
+}
+
+
+

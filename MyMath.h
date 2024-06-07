@@ -78,7 +78,7 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2);
 float Dot(const Vector3& v1, const Vector3& v2);
 
 
-float Lenght(const Vector3& v);
+float Length(const Vector3& v);
 
 Vector3 Normaraize(const Vector3& v);
 
@@ -87,3 +87,4 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+bool IsCollision(const Sphere& s1, const Sphere& s2);
