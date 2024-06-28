@@ -514,7 +514,7 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
 {
-	const uint32_t kSbdivision = 20;
+	const uint32_t kSbdivision = 16;
 	const float kLonEvery = 2 * std::numbers::pi_v<float> / kSbdivision;
 	const float KLatEvery = std::numbers::pi_v<float> / kSbdivision;
 
