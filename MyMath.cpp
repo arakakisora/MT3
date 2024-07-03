@@ -610,8 +610,21 @@ bool IsCollision(const Sphere& s1, const Plane& plane)
 	return false;
 }
 
+bool IsCollision(const Segment& segment, const Plane& plane)
+{
+	float dot = Dot(plane.normal, segment.diff);
+	if (dot == 0.0f) {
+		return false;
+	}
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+
+	if (t == -1 || t == 2) { return true; }
+	return false;
+
+}
 
 
+//四頂点を求める
 Vector3 Perpendicular(const Vector3& vector) {
 	if (vector.x != 0.0f || vector.y != 0.0f) {
 		return{ -vector.y,vector.x,0.0f };

@@ -40,6 +40,8 @@ struct Plane {
 	float distance;
 
 };
+
+
 //回転
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 //拡大
@@ -82,22 +84,25 @@ Matrix4x4 MekeIdentity4x4();
 
 //クロス積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
-
+//ドット積
 float Dot(const Vector3& v1, const Vector3& v2);
 float Dot(const Vector3& v1, const float& num);
-
-
+//長さ
 float Length(const Vector3& v);
-
+//正規化
 Vector3 Normaraize(const Vector3& v);
-
+//グリット
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+//球
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
-
+//最近接点
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+//当たり判定
 bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& s1, const Plane& plane);
+bool IsCollision(const Segment & segment, const Plane& plane);
+//四頂点を求める
 Vector3 Perpendicular(const Vector3& vector);
-
+//平面
 void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
