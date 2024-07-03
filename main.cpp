@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Sphere sphere1{ 0.0f,0.0f,1.0f, 1 };
 	Sphere sphere2{ 1.0f,0.0f,1.0f, 0.5 };
 
-	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
+	Segment segment{ {-2.0f,-1.0f,0.0f},{1.0f,0.0f,0.0f} };
 	Vector3 point{ -1.5f,0.6f,0.6f };
 
 	Plane plane{ {0.0f,1.0f,0.0f},1.0f };
@@ -64,10 +64,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
-		if (ImGui::CollapsingHeader("sphere1", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("segment", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("Sphere1Center", &sphere1.centor.x, 0.01f);
-			ImGui::DragFloat("Sphere1Radius", &sphere1.radius, 0.01f);
+			ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
+			ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
+			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
 		}
 
 		// 項目2
@@ -91,13 +92,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-
+		Vector3 start = TransformVector3(TransformVector3(segment.origin, viewprojectionMatrix), viewportMatrix);
+		Vector3 end = TransformVector3(TransformVector3(Add(segment.origin, segment.diff), viewprojectionMatrix), viewportMatrix);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		if (IsCollision(sphere1,plane)) {
-			DrawSphere(sphere1, viewprojectionMatrix, viewportMatrix, RED);
+		if (IsCollision(segment,plane)) {
+
+			Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), RED);
 		}
-		else{ DrawSphere(sphere1, viewprojectionMatrix, viewportMatrix, WHITE); }
+		else{ Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE); }
 		DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
 		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 

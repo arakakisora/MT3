@@ -618,7 +618,7 @@ bool IsCollision(const Segment& segment, const Plane& plane)
 	}
 	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
 
-	if (t == -1 || t == 2) { return true; }
+	if (0<=t&&t<=1) { return true; }
 	return false;
 
 }
