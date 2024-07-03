@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
 	Vector3 point{ -1.5f,0.6f,0.6f };
 
-
+	Plane plane{ {0.0f,1.0f,0.0f},1.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -71,10 +71,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 項目2
-		if (ImGui::CollapsingHeader("sphere2", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Object2", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("Sphere2Center", &sphere2.centor.x, 0.01f);
-			ImGui::DragFloat("Sphere2Radius", &sphere2.radius, 0.01f);
+			ImGui::DragFloat3("plane.Normal", &plane.normal.x, 0.01f);
+			ImGui::DragFloat("plane.Distance", &plane.distance, 0.01f);
+		
+			plane.normal = Normaraize(plane.normal);
 
 		}
 		
@@ -92,12 +94,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		if (IsCollision(sphere1,sphere2)) {
+		if (IsCollision(sphere1,plane)) {
 			DrawSphere(sphere1, viewprojectionMatrix, viewportMatrix, RED);
 		}
 		else{ DrawSphere(sphere1, viewprojectionMatrix, viewportMatrix, WHITE); }
-		
-		DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
+		DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
+		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで

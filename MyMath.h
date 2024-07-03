@@ -33,6 +33,13 @@ struct Segment {
 	Vector3 origin;
 	Vector3 diff;
 };
+
+struct Plane {
+
+	Vector3 normal;
+	float distance;
+
+};
 //回転
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 //拡大
@@ -63,6 +70,7 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
 //掛け算
 Matrix4x4 Multiply(const Matrix4x4& mt1, const Matrix4x4& mt2);
+Vector3 Multiply(const Vector3& mt1, const float& mt2);
 
 //逆行列
 Matrix4x4 Inverse(const Matrix4x4& mt1);
@@ -76,6 +84,7 @@ Matrix4x4 MekeIdentity4x4();
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 float Dot(const Vector3& v1, const Vector3& v2);
+float Dot(const Vector3& v1, const float& num);
 
 
 float Length(const Vector3& v);
@@ -88,3 +97,7 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 bool IsCollision(const Sphere& s1, const Sphere& s2);
+bool IsCollision(const Sphere& s1, const Plane& plane);
+Vector3 Perpendicular(const Vector3& vector);
+
+void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);

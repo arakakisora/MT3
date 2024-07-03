@@ -302,6 +302,15 @@ Matrix4x4 Multiply(const Matrix4x4& mt1, const Matrix4x4& mt2)
 
 }
 
+Vector3 Multiply(const Vector3& mt1, const float& mt2)
+{
+	Vector3 ans;
+	ans.x = mt1.x * mt2;
+	ans.y = mt1.y * mt2;
+	ans.z = mt1.z * mt2;
+	return ans;
+}
+
 Matrix4x4 Inverse(const Matrix4x4& mt1)
 {
 	Matrix4x4 ans;
@@ -453,6 +462,14 @@ float Dot(const Vector3& v1, const Vector3& v2)
 	return ans;
 }
 
+float Dot(const Vector3& v1, const float& num)
+{
+	float ans;
+
+	ans = v1.x * num + v1.y * num + v1.z * num;
+	return ans;
+}
+
 float Length(const Vector3& v)
 {
 	float ans;
@@ -583,5 +600,44 @@ bool IsCollision(const Sphere& s1, const Sphere& s2)
 	return false;
 }
 
+bool IsCollision(const Sphere& s1, const Plane& plane)
+{
+	float d = Dot(plane.normal, plane.distance);
+	float k = fabs(Dot(plane.normal, s1.centor) - d);
+	if (k <= s1.radius) {
+		return true;
+	}
+	return false;
+}
+
+
+
+Vector3 Perpendicular(const Vector3& vector) {
+	if (vector.x != 0.0f || vector.y != 0.0f) {
+		return{ -vector.y,vector.x,0.0f };
+	}
+	return{ 0.0f,-vector.z,vector.y };
+}
+
+void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+
+	Vector3 center = Multiply(plane.normal, plane.distance);
+	Vector3 perpendiculars[4];
+	perpendiculars[0] = Normaraize(Perpendicular(plane.normal));
+	perpendiculars[1] = { -perpendiculars[0].x,-perpendiculars[0].y,-perpendiculars[0].z };
+	perpendiculars[2] = Cross(plane.normal, perpendiculars[0]);
+	perpendiculars[3] = { -perpendiculars[2].x,-perpendiculars[2].y,-perpendiculars[2].z };
+
+	Vector3 points[4];
+	for (int32_t index = 0; index < 4; ++index) {
+		Vector3 extend = Multiply(perpendiculars[index], 2.0f);
+		Vector3 point = Add(center, extend);
+		points[index] = TransformVector3(TransformVector3(point, viewProjectionMatrix), viewportMatrix);
+	}
+	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[2].x), int(points[2].y), color);
+	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[2].x), int(points[2].y), color);
+	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[3].x), int(points[3].y), color);
+	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[3].x), int(points[3].y), color);
+}
 
 
