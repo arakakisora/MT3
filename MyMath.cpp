@@ -1,5 +1,15 @@
 ﻿#include "MyMath.h"
 
+Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
+Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
+Vector3 operator*(float s, const Vector3& v) { return Multiply(v, s); }
+Vector3 operator*(const Vector3& v, float s) { return s * v; }
+Vector3 operator/(const Vector3& v, float s) { return Multiply(v, 1.0f / s); }
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) { return Add(m1, m2); }
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) { return Subtract(m1, m2); }
+Matrix4x4 operator* (const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1, m2); }
+
+
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate)
 {
 	Matrix4x4 ans;
@@ -311,6 +321,15 @@ Vector3 Multiply(const Vector3& mt1, const float& mt2)
 	return ans;
 }
 
+Vector3 Multiply(const Vector3& mt1, const Vector3& mt2)
+{
+	Vector3 ans;
+	ans.x = mt1.x * mt2.x;
+	ans.y = mt1.y * mt2.y;
+	ans.z = mt1.z * mt2.x;
+	return ans;
+}
+
 Matrix4x4 Inverse(const Matrix4x4& mt1)
 {
 	Matrix4x4 ans;
@@ -618,7 +637,46 @@ bool IsCollision(const Segment& segment, const Plane& plane)
 	}
 	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
 
-	if (0<=t&&t<=1) { return true; }
+	if (0 <= t && t <= 1) { return true; }
+	return false;
+
+}
+
+bool IsCollision(const Segment& segment, const Triangle& triangle)
+{
+	Vector3 v1 = triangle.vertices[0] - triangle.vertices[1];
+	Vector3 v2 = triangle.vertices[2] - triangle.vertices[1];
+	Vector3 v3 = triangle.vertices[0] - triangle.vertices[2];
+	Plane plane;
+	plane.normal = Normaraize(Cross(v1, v2));
+	plane.distance = Dot(plane.normal, triangle.vertices[0]);
+
+	float dot = Dot(plane.normal, segment.diff);
+	if (dot == 0.0f) {
+		return false;
+	}
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+	Vector3 p = segment.origin + segment.diff * t;
+	Vector3 v1p = p - triangle.vertices[1];
+	Vector3 v2p = p - triangle.vertices[2];
+	Vector3 v0p = p - triangle.vertices[0];
+
+	Vector3 cross01 = Cross(v1, v1p);
+	Vector3 cross12 = Cross(v2, v2p);
+	Vector3 cross20 = Cross(v3, v0p);
+	if (0 <= t && t <= 1) {
+
+		if (Dot(cross01, plane.normal) >= 0.0f &&
+			Dot(cross12, plane.normal) >= 0.0f &&
+			Dot(cross20, plane.normal) >= 0.0f) {
+
+			return true;
+
+
+		}
+
+
+	}
 	return false;
 
 }
@@ -651,6 +709,23 @@ void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const
 	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[2].x), int(points[2].y), color);
 	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[3].x), int(points[3].y), color);
 	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[3].x), int(points[3].y), color);
+}
+
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 points[3];
+	for (int32_t index = 0; index < 3; ++index) {
+
+		points[index] = TransformVector3(TransformVector3(triangle.vertices[index], viewProjectionMatrix), viewportMatrix);
+	}
+
+	Novice::DrawTriangle(
+		(int)points[1].x, (int)points[1].y,
+		(int)points[2].x, (int)points[2].y,
+		(int)points[0].x, (int)points[0].y,
+		color, kFillModeWireFrame
+	);
+
 }
 
 

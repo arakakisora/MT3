@@ -9,6 +9,7 @@
 #include <numbers>
 #include <algorithm>
 
+
 struct Transform {
 	Vector3 scale;
 	Vector3 rotate;
@@ -41,6 +42,21 @@ struct Plane {
 
 };
 
+struct Triangle {
+
+	Vector3 vertices[3];
+};
+
+//Vector3 operator+(const Vector3&v1,const Vector3 v2)
+
+Vector3 operator+(const Vector3& v1, const Vector3& v2);
+Vector3 operator-(const Vector3& v1, const Vector3& v2);
+Vector3 operator*(float s, const Vector3& v);
+Vector3 operator*(const Vector3& v, float s);
+Vector3 operator/(const Vector3& v, float s);
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator* (const Matrix4x4& m1, const Matrix4x4& m2);
 
 //回転
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
@@ -73,6 +89,7 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 //掛け算
 Matrix4x4 Multiply(const Matrix4x4& mt1, const Matrix4x4& mt2);
 Vector3 Multiply(const Vector3& mt1, const float& mt2);
+Vector3 Multiply(const Vector3& mt1, const Vector3& mt2);
 
 //逆行列
 Matrix4x4 Inverse(const Matrix4x4& mt1);
@@ -101,8 +118,11 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 //当たり判定
 bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& s1, const Plane& plane);
-bool IsCollision(const Segment & segment, const Plane& plane);
+bool IsCollision(const Segment& segment, const Plane& plane);
+bool IsCollision(const Segment& segment, const Triangle& triangle);
+
 //四頂点を求める
 Vector3 Perpendicular(const Vector3& vector);
 //平面
 void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);

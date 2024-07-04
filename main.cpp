@@ -2,6 +2,8 @@
 #include "MyMath.h"
 #include"RenderingPipeline.h"
 #include "imgui.h"
+#include "Vector2.h"
+
 
 const char kWindowTitle[] = "学籍番号";
 
@@ -29,7 +31,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 point{ -1.5f,0.6f,0.6f };
 
 	Plane plane{ {0.0f,1.0f,0.0f},1.0f };
+	Triangle triangle{ { {1.0f,0.0f,0.0f},{-1.0f,0.0f,0.0f},{1.0f,+0.5f,0.0f} } };
 
+	int  MousePosX;
+	int  MousePosY;
+	Vector2 preMouse = { 0 };
+	Transform precamera = { 0 };
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -38,6 +45,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// キー入力を受け取る
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
+		Novice::GetMousePosition(&MousePosX, &MousePosY);
 
 		///
 		/// ↓更新処理ここから
@@ -52,18 +60,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
 
+		if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
 
-		
+			preMouse.x = (float)MousePosX;
+			preMouse.y = (float)MousePosY;
+			precamera = cameraTransform;
 
+		}
 
+		if (keys[DIK_SPACE]) {
+			Vector2 dist;
+			dist.x = preMouse.x - (float)MousePosX;
+			dist.y = preMouse.y - (float)MousePosY;
+			dist.y *= -1;
+			if (Novice::IsPressMouse(2)) {
+
+				cameraTransform.translate.x = precamera.translate.x + (float)dist.x * 0.001f;
+				cameraTransform.translate.y = ((precamera.translate.y + (float)dist.y * 0.001f));
+				
+			}
+			cameraTransform.translate.z += Novice::GetWheel() * 0.001f;
+			if (Novice::IsPressMouse(0)) {
+
+				cameraTransform.rotate.y = precamera.rotate.y+ (float)dist.x * 0.001f;
+				cameraTransform.rotate.x = precamera.rotate.x + (float)dist.y * 0.001f;
+
+			}
+		}
 
 
 
 
 
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
+		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
+			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
+		}
+
 		if (ImGui::CollapsingHeader("segment", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
@@ -74,15 +109,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 項目2
 		if (ImGui::CollapsingHeader("Object2", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("plane.Normal", &plane.normal.x, 0.01f);
-			ImGui::DragFloat("plane.Distance", &plane.distance, 0.01f);
-		
+			ImGui::DragFloat3("triangle0", &triangle.vertices[0].x, 0.01f);
+			ImGui::DragFloat3("triangle1", &triangle.vertices[1].x, 0.01f);
+			ImGui::DragFloat3("triangle2", &triangle.vertices[2].x, 0.01f);
+
+
 			plane.normal = Normaraize(plane.normal);
 
 		}
-		
+
 		ImGui::End();
-		
+
 
 		///
 		/// ↑更新処理ここまで
@@ -97,12 +134,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		if (IsCollision(segment,plane)) {
+		if (IsCollision(segment, triangle)) {
 
 			Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), RED);
 		}
-		else{ Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE); }
-		DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
+		else { Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE); }
+		DrawTriangle(triangle, viewprojectionMatrix, viewportMatrix, WHITE);
+		//DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
 		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
