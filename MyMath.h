@@ -15,6 +15,7 @@ struct Transform {
 	Vector3 rotate;
 	Vector3 translate;
 };
+
 struct Sphere {
 	Vector3 centor;
 	float radius;
@@ -26,11 +27,13 @@ struct Line {
 };
 
 struct Ray {
+
 	Vector3 origin;
 	Vector3 diff;
 };
 
 struct Segment {
+
 	Vector3 origin;
 	Vector3 diff;
 };
@@ -45,6 +48,12 @@ struct Plane {
 struct Triangle {
 
 	Vector3 vertices[3];
+};
+
+struct AABB {
+
+	Vector3 min;
+	Vector3 max;
 };
 
 //Vector3 operator+(const Vector3&v1,const Vector3 v2)
