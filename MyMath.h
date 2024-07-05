@@ -129,6 +129,7 @@ bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& s1, const Plane& plane);
 bool IsCollision(const Segment& segment, const Plane& plane);
 bool IsCollision(const Segment& segment, const Triangle& triangle);
+bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 //四頂点を求める
 Vector3 Perpendicular(const Vector3& vector);
