@@ -33,6 +33,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Plane plane{ {0.0f,1.0f,0.0f},1.0f };
 	Triangle triangle{ { {1.0f,0.0f,0.0f},{-1.0f,0.0f,0.0f},{1.0f,+0.5f,0.0f} } };
 
+	AABB aabb1{
+
+        {-0.5f, -0.5f, -0.5f},
+        {0.0f, 0.0f, 0.0f },
+
+	};
+
+	AABB aabb2{
+
+	     {0.2f, 0.2f, 0.2f},
+	     {1.0f, 1.0f, 1.0f},
+	};
+
 	int  MousePosX;
 	int  MousePosY;
 	Vector2 preMouse = { 0 };
@@ -60,15 +73,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
 
-		if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
-
-			preMouse.x = (float)MousePosX;
-			preMouse.y = (float)MousePosY;
-			precamera = cameraTransform;
-
-		}
+		
 
 		if (keys[DIK_SPACE]) {
+			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
+
+				preMouse.x = (float)MousePosX;
+				preMouse.y = (float)MousePosY;
+				precamera = cameraTransform;
+
+			}
 			Vector2 dist;
 			dist.x = preMouse.x - (float)MousePosX;
 			dist.y = preMouse.y - (float)MousePosY;
@@ -77,12 +91,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				cameraTransform.translate.x = precamera.translate.x + (float)dist.x * 0.001f;
 				cameraTransform.translate.y = ((precamera.translate.y + (float)dist.y * 0.001f));
-				
+
 			}
 			cameraTransform.translate.z += Novice::GetWheel() * 0.001f;
 			if (Novice::IsPressMouse(0)) {
 
-				cameraTransform.rotate.y = precamera.rotate.y+ (float)dist.x * 0.001f;
+				cameraTransform.rotate.y = precamera.rotate.y + (float)dist.x * 0.001f;
 				cameraTransform.rotate.x = precamera.rotate.x + (float)dist.y * 0.001f;
 
 			}
@@ -99,22 +113,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
 		}
 
-		if (ImGui::CollapsingHeader("segment", ImGuiTreeNodeFlags_DefaultOpen))
+
+		if (ImGui::CollapsingHeader("aabb1", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
-			ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
+			ImGui::DragFloat3("min", &aabb1.min.x, 0.01f);
+			ImGui::DragFloat3("max", &aabb1.max.x, 0.01f);
 			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
 		}
 
 		// 項目2
-		if (ImGui::CollapsingHeader("Object2", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("aabb2", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("triangle0", &triangle.vertices[0].x, 0.01f);
-			ImGui::DragFloat3("triangle1", &triangle.vertices[1].x, 0.01f);
-			ImGui::DragFloat3("triangle2", &triangle.vertices[2].x, 0.01f);
-
-
-			plane.normal = Normaraize(plane.normal);
+			ImGui::DragFloat3("min2", &aabb2.min.x, 0.01f);
+			ImGui::DragFloat3("max2", &aabb2.max.x, 0.01f);
+					
 
 		}
 
@@ -131,15 +143,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Vector3 start = TransformVector3(TransformVector3(segment.origin, viewprojectionMatrix), viewportMatrix);
 		Vector3 end = TransformVector3(TransformVector3(Add(segment.origin, segment.diff), viewprojectionMatrix), viewportMatrix);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+		//Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		if (IsCollision(segment, triangle)) {
 
-			Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), RED);
+		DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
+
+		
+		if (IsCollision(aabb1, aabb2)) {
+		
+			DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, RED);
 		}
-		else { Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE); }
-		DrawTriangle(triangle, viewprojectionMatrix, viewportMatrix, WHITE);
+		else { DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, WHITE); }
+
+
 		//DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
 		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 

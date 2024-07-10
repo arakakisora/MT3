@@ -746,20 +746,38 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 
 void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
 {
-	Vector3 square[8];
+	Vector3 square[4];
+	Vector3 square2[4];
 	square[0] = { aabb.min };
 	square[1] = { aabb.min.x,aabb.min.y,aabb.max.z };
 	square[2] = { aabb.max.x,aabb.min.y,aabb.max.z };
 	square[3] = { aabb.max.x,aabb.min.y,aabb.min.z };
-	square[4] = { aabb.min.x,aabb.max.y,aabb.min.z };
-	square[5] = { aabb.min.x,aabb.max.y,aabb.max.z };
-	square[6] = { aabb.max };
-	square[7] = { aabb.max.x,aabb.max.y,aabb.min.z };
 
+	square2[0] = { aabb.min.x,aabb.max.y,aabb.min.z };
+	square2[1] = { aabb.min.x,aabb.max.y,aabb.max.z };
+	square2[2] = { aabb.max };
+	square2[3] = { aabb.max.x,aabb.max.y,aabb.min.z };
 
-	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[1].x, (int)square[1].y)
+	for (int32_t index = 0; index < 4; ++index) {
+		
+		square[index] = TransformVector3(TransformVector3(square[index], viewProjectionMatrix), viewportMatrix);
+		square2[index] = TransformVector3(TransformVector3(square2[index], viewProjectionMatrix), viewportMatrix);
+	}
 
+	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[1].x, (int)square[1].y,color);
+	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[3].x, (int)square[3].y, color);
+	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square[1].x, (int)square[1].y, color);
+	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square[3].x, (int)square[3].y, color);
 
+	Novice::DrawLine((int)square2[0].x, (int)square2[0].y, (int)square2[1].x, (int)square2[1].y, color);
+	Novice::DrawLine((int)square2[0].x, (int)square2[0].y, (int)square2[3].x, (int)square2[3].y, color);
+	Novice::DrawLine((int)square2[2].x, (int)square2[2].y, (int)square2[1].x, (int)square2[1].y, color);
+	Novice::DrawLine((int)square2[2].x, (int)square2[2].y, (int)square2[3].x, (int)square2[3].y, color);
+
+	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square2[0].x, (int)square2[0].y, color);
+	Novice::DrawLine((int)square[1].x, (int)square[1].y, (int)square2[1].x, (int)square2[1].y, color);
+	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square2[2].x, (int)square2[2].y, color);
+	Novice::DrawLine((int)square[3].x, (int)square[3].y, (int)square2[3].x, (int)square2[3].y, color);
 }
 
 
