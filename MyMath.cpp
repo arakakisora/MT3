@@ -691,10 +691,10 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2)
 
 
 	}
-		
+
 	return false;
 
-	
+
 }
 
 
@@ -741,6 +741,24 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 		(int)points[0].x, (int)points[0].y,
 		color, kFillModeWireFrame
 	);
+
+}
+
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 square[8];
+	square[0] = { aabb.min };
+	square[1] = { aabb.min.x,aabb.min.y,aabb.max.z };
+	square[2] = { aabb.max.x,aabb.min.y,aabb.max.z };
+	square[3] = { aabb.max.x,aabb.min.y,aabb.min.z };
+	square[4] = { aabb.min.x,aabb.max.y,aabb.min.z };
+	square[5] = { aabb.min.x,aabb.max.y,aabb.max.z };
+	square[6] = { aabb.max };
+	square[7] = { aabb.max.x,aabb.max.y,aabb.min.z };
+
+
+	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[1].x, (int)square[1].y)
+
 
 }
 
