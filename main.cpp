@@ -147,10 +147,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
 
-		DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
+		//DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
 
 		
-		if (IsCollision(aabb1, aabb2)) {
+		if (IsCollision(aabb1, sphere2)) {
 		
 			DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, RED);
 		}
@@ -158,7 +158,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		//DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
-		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
+		DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで

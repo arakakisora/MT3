@@ -560,21 +560,21 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 			float lon = lonIndex * kLonEvery;
 			Vector3 a = {
-				sphere.radius * std::cosf(lat) * std::cosf(lon) + sphere.centor.x,
-				sphere.radius * std::sinf(lat) + sphere.centor.y,
-				sphere.radius * std::cosf(lat) * std::sinf(lon) + sphere.centor.z
+				sphere.radius * std::cosf(lat) * std::cosf(lon) + sphere.center.x,
+				sphere.radius * std::sinf(lat) + sphere.center.y,
+				sphere.radius * std::cosf(lat) * std::sinf(lon) + sphere.center.z
 			};
 
 			Vector3 b = {
-				sphere.radius * std::cosf(lat + KLatEvery) * std::cosf(lon) + sphere.centor.x,
-				sphere.radius * std::sinf(lat + KLatEvery) + sphere.centor.y,
-				sphere.radius * std::cosf(lat + KLatEvery) * std::sinf(lon) + sphere.centor.z
+				sphere.radius * std::cosf(lat + KLatEvery) * std::cosf(lon) + sphere.center.x,
+				sphere.radius * std::sinf(lat + KLatEvery) + sphere.center.y,
+				sphere.radius * std::cosf(lat + KLatEvery) * std::sinf(lon) + sphere.center.z
 			};
 
 			Vector3 c = {
-				sphere.radius * std::cosf(lat) * std::cosf(lon + kLonEvery) + sphere.centor.x,
-				sphere.radius * std::sinf(lat) + sphere.centor.y,
-				sphere.radius * std::cosf(lat) * std::sinf(lon + kLonEvery) + sphere.centor.z
+				sphere.radius * std::cosf(lat) * std::cosf(lon + kLonEvery) + sphere.center.x,
+				sphere.radius * std::sinf(lat) + sphere.center.y,
+				sphere.radius * std::cosf(lat) * std::sinf(lon + kLonEvery) + sphere.center.z
 			};
 
 
@@ -612,7 +612,7 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 
 bool IsCollision(const Sphere& s1, const Sphere& s2)
 {
-	float distance = Length(Subtract(s2.centor, s1.centor));
+	float distance = Length(Subtract(s2.center, s1.center));
 
 	if (distance <= s1.radius + s2.radius) { return true; };
 
@@ -622,7 +622,7 @@ bool IsCollision(const Sphere& s1, const Sphere& s2)
 bool IsCollision(const Sphere& s1, const Plane& plane)
 {
 	float d = Dot(plane.normal, plane.distance);
-	float k = fabs(Dot(plane.normal, s1.centor) - d);
+	float k = fabs(Dot(plane.normal, s1.center) - d);
 	if (k <= s1.radius) {
 		return true;
 	}
@@ -694,6 +694,24 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2)
 
 	return false;
 
+
+}
+
+bool IsCollision(const AABB& aabb, const Sphere& sphere)
+{
+	//最近接点を求める
+	Vector3 closesetPint{
+		{std::clamp(sphere.center.x,aabb.min.x,aabb.max.x)},
+		{std::clamp(sphere.center.y,aabb.min.y,aabb.max.y)},
+		{std::clamp(sphere.center.z,aabb.min.z,aabb.max.z)},
+	};
+	//最近接点と球の中心との距離を求める
+	float distance = Length(closesetPint - sphere.center);
+	//距離が半径よりも小さければ衝突
+	if (distance <= sphere.radius) {
+		return true;
+	}
+	return false;
 
 }
 
