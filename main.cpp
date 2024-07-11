@@ -75,6 +75,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		
 
+		
+		
+
+
+
+
+		ImGui::Begin("Window");
+		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
+			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
+		}
+
+
+		if (ImGui::CollapsingHeader("aabb2", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("min", &aabb2.min.x, 0.01f);
+			ImGui::DragFloat3("max", &aabb2.max.x, 0.01f);
+			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
+		}
+		// 項目2
+		if (ImGui::CollapsingHeader("sphere2", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("Sphere2Center", &sphere2.center.x, 0.01f);
+			ImGui::DragFloat("Sphere2Radius", &sphere2.radius, 0.01f);
+
+		}
+	
+
+		ImGui::End();
 		if (keys[DIK_SPACE]) {
 			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
 
@@ -102,37 +132,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 
-
-
-
-
-		ImGui::Begin("Window");
-		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
-			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
-		}
-
-
-		if (ImGui::CollapsingHeader("aabb1", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::DragFloat3("min", &aabb1.min.x, 0.01f);
-			ImGui::DragFloat3("max", &aabb1.max.x, 0.01f);
-			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
-		}
-
-		// 項目2
-		if (ImGui::CollapsingHeader("aabb2", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::DragFloat3("min2", &aabb2.min.x, 0.01f);
-			ImGui::DragFloat3("max2", &aabb2.max.x, 0.01f);
-					
-
-		}
-
-		ImGui::End();
-
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -150,7 +149,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
 
 		
-		if (IsCollision(aabb1, sphere2)) {
+		if (IsCollision(aabb2, sphere2)) {
 		
 			DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, RED);
 		}
