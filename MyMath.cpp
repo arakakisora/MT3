@@ -1,4 +1,7 @@
-﻿#include "MyMath.h"
+﻿
+#define NOMINMAX 
+#include <windows.h>
+#include "MyMath.h"
 
 Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
 Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
@@ -715,6 +718,44 @@ bool IsCollision(const AABB& aabb, const Sphere& sphere)
 
 }
 
+bool IsCollision(const AABB& aabb, const Segment& segment)
+{
+	Vector3 Tmin{
+
+		{aabb.min.x - segment.origin.x / segment.diff.x},
+		{aabb.min.y - segment.origin.y / segment.diff.y},
+		{aabb.min.z - segment.origin.z / segment.diff.z},
+	};
+
+	Vector3 Tmax{ 
+		{aabb.max.x - segment.origin.x / segment.diff.x},
+		{aabb.max.y - segment.origin.y / segment.diff.y},
+		{aabb.max.z - segment.origin.z / segment.diff.z},
+	};
+
+	Vector3 tNear{
+
+		{std::min(Tmin.x,Tmax.x)},
+		{std::min(Tmin.y,Tmax.y)},
+		{std::min(Tmin.z,Tmax.z)}
+	};
+	Vector3 tFar{
+
+		{std::max(Tmin.x,Tmax.x)},
+		{std::max(Tmin.y,Tmax.y)},
+		{std::max(Tmin.z,Tmax.z)}
+	};
+
+	float tmin = std::max(std::max(tNear.x, tNear.y), tNear.z);
+	float tmax = std::min(std::min(tFar.x, tFar.y), tFar.z);
+	if (tmin <= tmax) {
+		return true;
+	}
+	return false;
+
+
+}
+
 
 //四頂点を求める
 Vector3 Perpendicular(const Vector3& vector) {
@@ -777,12 +818,12 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 	square2[3] = { aabb.max.x,aabb.max.y,aabb.min.z };
 
 	for (int32_t index = 0; index < 4; ++index) {
-		
+
 		square[index] = TransformVector3(TransformVector3(square[index], viewProjectionMatrix), viewportMatrix);
 		square2[index] = TransformVector3(TransformVector3(square2[index], viewProjectionMatrix), viewportMatrix);
 	}
 
-	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[1].x, (int)square[1].y,color);
+	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[1].x, (int)square[1].y, color);
 	Novice::DrawLine((int)square[0].x, (int)square[0].y, (int)square[3].x, (int)square[3].y, color);
 	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square[1].x, (int)square[1].y, color);
 	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square[3].x, (int)square[3].y, color);

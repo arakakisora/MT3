@@ -27,7 +27,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Sphere sphere1{ 0.0f,0.0f,1.0f, 1 };
 	Sphere sphere2{ 1.0f,0.0f,1.0f, 0.5 };
 
-	Segment segment{ {-2.0f,-1.0f,0.0f},{1.0f,0.0f,0.0f} };
+	Segment segment{ {-0.7f,0.3f,0.0f},{2.0f,-0.5f,0.0f} };
 	Vector3 point{ -1.5f,0.6f,0.6f };
 
 	Plane plane{ {0.0f,1.0f,0.0f},1.0f };
@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	AABB aabb1{
 
         {-0.5f, -0.5f, -0.5f},
-        {0.0f, 0.0f, 0.0f },
+        {0.5f, 0.5f, 0.5f },
 
 	};
 
@@ -142,22 +142,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Vector3 start = TransformVector3(TransformVector3(segment.origin, viewprojectionMatrix), viewportMatrix);
 		Vector3 end = TransformVector3(TransformVector3(Add(segment.origin, segment.diff), viewprojectionMatrix), viewportMatrix);
-		//Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
 
 		//DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
 
 		
-		if (IsCollision(aabb2, sphere2)) {
+		if (IsCollision(aabb1,segment)) {
 		
-			DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, RED);
+			DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, RED);
 		}
-		else { DrawAABB(aabb2, worldviewprojectionMatrix, viewportMatrix, WHITE); }
+		else { DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE); }
 
 
 		//DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
-		DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
+		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで
