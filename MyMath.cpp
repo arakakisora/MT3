@@ -722,15 +722,15 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 {
 	Vector3 Tmin{
 
-		{aabb.min.x - segment.origin.x / segment.diff.x},
-		{aabb.min.y - segment.origin.y / segment.diff.y},
-		{aabb.min.z - segment.origin.z / segment.diff.z},
+		{(aabb.min.x - segment.origin.x) / segment.diff.x},
+		{(aabb.min.y - segment.origin.y) / segment.diff.y},
+		{(aabb.min.z - segment.origin.z) / segment.diff.z},
 	};
 
 	Vector3 Tmax{ 
-		{aabb.max.x - segment.origin.x / segment.diff.x},
-		{aabb.max.y - segment.origin.y / segment.diff.y},
-		{aabb.max.z - segment.origin.z / segment.diff.z},
+		{(aabb.max.x - segment.origin.x) / segment.diff.x},
+		{(aabb.max.y - segment.origin.y) / segment.diff.y},
+		{(aabb.max.z - segment.origin.z) / segment.diff.z},
 	};
 
 	Vector3 tNear{

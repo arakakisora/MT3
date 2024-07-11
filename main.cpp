@@ -89,18 +89,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 
-		if (ImGui::CollapsingHeader("aabb2", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("aabb1", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("min", &aabb2.min.x, 0.01f);
-			ImGui::DragFloat3("max", &aabb2.max.x, 0.01f);
+			ImGui::DragFloat3("min", &aabb1.min.x, 0.01f);
+			ImGui::DragFloat3("max", &aabb1.max.x, 0.01f);
 			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
 		}
-		// 項目2
-		if (ImGui::CollapsingHeader("sphere2", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("segment", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("Sphere2Center", &sphere2.center.x, 0.01f);
-			ImGui::DragFloat("Sphere2Radius", &sphere2.radius, 0.01f);
-
+			ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
+			ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
+			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
 		}
 	
 
