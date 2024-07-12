@@ -465,6 +465,17 @@ Matrix4x4 MekeIdentity4x4()
 
 }
 
+Vector3 Lerp(const Vector3& a, const Vector3& b, float t) {
+
+	Vector3 ans;
+
+	ans.x = t * a.x + (1.0f - t) * b.x;
+	ans.y = t * a.y + (1.0f - t) * b.y;
+	ans.z = t * a.z + (1.0f - t) * b.z;
+
+	return ans;
+}
+
 Vector3 Cross(const Vector3& v1, const Vector3& v2)
 {
 	Vector3 ans;
@@ -727,7 +738,7 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 		{(aabb.min.z - segment.origin.z) / segment.diff.z},
 	};
 
-	Vector3 Tmax{ 
+	Vector3 Tmax{
 		{(aabb.max.x - segment.origin.x) / segment.diff.x},
 		{(aabb.max.y - segment.origin.y) / segment.diff.y},
 		{(aabb.max.z - segment.origin.z) / segment.diff.z},
@@ -749,7 +760,10 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 	float tmin = std::max(std::max(tNear.x, tNear.y), tNear.z);
 	float tmax = std::min(std::min(tFar.x, tFar.y), tFar.z);
 	if (tmin <= tmax) {
-		return true;
+		if (tmin * tmax < 0.0f)
+		{
+			return true;
+		}
 	}
 	return false;
 
@@ -838,5 +852,7 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 	Novice::DrawLine((int)square[2].x, (int)square[2].y, (int)square2[2].x, (int)square2[2].y, color);
 	Novice::DrawLine((int)square[3].x, (int)square[3].y, (int)square2[3].x, (int)square2[3].y, color);
 }
+
+void DrowBezier(const Vector3&controlPint0,const Vector3& controlPoint1,const Vector3&);
 
 
