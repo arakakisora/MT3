@@ -853,6 +853,34 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 	Novice::DrawLine((int)square[3].x, (int)square[3].y, (int)square2[3].x, (int)square2[3].y, color);
 }
 
-void DrowBezier(const Vector3&controlPint0,const Vector3& controlPoint1,const Vector3&);
+void DrowBezier(const Vector3& controlPint0, const Vector3& controlPoint1, const Vector3& controlPoint2, 
+	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color){
+
+	float split = 60;
+	for (int i = 0; i < split; i++) {
+		float t0= i / split;
+		float t1 =( i+1) / split;
+		Vector3 p0p1start = Lerp(controlPint0, controlPoint1, t0);
+		Vector3 p1p2start = Lerp(controlPoint1, controlPoint2, t0);
+		Vector3 p0 = Lerp(p0p1start, p1p2start, t0);
+
+		Vector3 p0p1end = Lerp(controlPint0, controlPoint1, t1);
+		Vector3 p1p2end= Lerp(controlPoint1, controlPoint2, t1);
+		Vector3 p1 = Lerp(p0p1end, p1p2end, t1);
+
+		
+
+		Vector3 start = TransformVector3(TransformVector3(p0, viewProjectionMatrix), viewportMatrix);
+		Vector3 end = TransformVector3(TransformVector3(p1, viewProjectionMatrix), viewportMatrix);
+
+		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, color);
+
+	}
+	
+
+
+}
+
+
 
 

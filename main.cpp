@@ -35,15 +35,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	AABB aabb1{
 
-        {-0.5f, -0.5f, -0.5f},
-        {0.5f, 0.5f, 0.5f },
+		{-0.5f, -0.5f, -0.5f},
+		{0.5f, 0.5f, 0.5f },
 
 	};
 
 	AABB aabb2{
 
-	     {0.2f, 0.2f, 0.2f},
-	     {1.0f, 1.0f, 1.0f},
+		 {0.2f, 0.2f, 0.2f},
+		 {1.0f, 1.0f, 1.0f},
+	};
+
+	Vector3 controlPoints[3] = {
+		{-0.8f, 0.58f, 1.0f },
+		{1.76f, 1.0f, -0.3f},
+		{0.94f, -0.7f, 2.3f },
 	};
 
 	int  MousePosX;
@@ -73,10 +79,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
 
-		
 
-		
-		
+
+
+
 
 
 
@@ -89,21 +95,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 
-		if (ImGui::CollapsingHeader("aabb1", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("controlPoint", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("min", &aabb1.min.x, 0.01f);
-			ImGui::DragFloat3("max", &aabb1.max.x, 0.01f);
-			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
+			ImGui::DragFloat3("controlPoint[0]", &controlPoints[0].x, 0.01f);
+			ImGui::DragFloat3("controlPoint[1]", &controlPoints[1].x, 0.01f);
+			ImGui::DragFloat3("controlPoint[2]", &controlPoints[2].x, 0.01f);
+			
 		}
-		if (ImGui::CollapsingHeader("segment", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::DragFloat3("Segment.Origin", &segment.origin.x, 0.01f);
-			ImGui::DragFloat3("Segment.Diff", &segment.diff.x, 0.01f);
-			//ImGui::DragFloat("Segment.Diff", &sphere1.radius, 0.01f);
-		}
-	
-
+		
 		ImGui::End();
+
 		if (keys[DIK_SPACE]) {
 			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
 
@@ -139,24 +140,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		Vector3 start = TransformVector3(TransformVector3(segment.origin, viewprojectionMatrix), viewportMatrix);
-		Vector3 end = TransformVector3(TransformVector3(Add(segment.origin, segment.diff), viewprojectionMatrix), viewportMatrix);
-		Novice::DrawLine(int(start.x), int(start.y), int(end.x), int(end.y), WHITE);
+
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
 
-		//DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE);
-
+		DrowBezier(controlPoints[0], controlPoints[1], controlPoints[2], viewprojectionMatrix, viewportMatrix, WHITE);
 		
-		if (IsCollision(aabb1,segment)) {
-		
-			DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, RED);
-		}
-		else { DrawAABB(aabb1, worldviewprojectionMatrix, viewportMatrix, WHITE); }
-
-
-		//DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
-		//DrawSphere(sphere2, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで
