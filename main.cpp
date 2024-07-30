@@ -46,10 +46,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		 {1.0f, 1.0f, 1.0f},
 	};
 
+
+
 	Vector3 controlPoints[3] = {
 		{-0.8f, 0.58f, 1.0f },
 		{1.76f, 1.0f, -0.3f},
 		{0.94f, -0.7f, 2.3f },
+	};
+
+
+	//肩、肘、手
+	Vector3 translates[3] = {
+		{0.2f, 1.0f, 0.0f},
+		{0.4f, 0.0f, 0.0f},
+		{0.3f, 0.0f, 0.0f},
+	};
+	Vector3 rotates[3]{
+		{0.0f, 0.0f, -6.8f},
+		{0.0f, 0.0f, 1.4f},
+		{0.0f, 0.0f, 0.0f },
+	};
+	Vector3 scales[3] = {
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f}
 	};
 
 	int  MousePosX;
@@ -79,10 +99,46 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
 
+		Matrix4x4 localShoulderMatrix = MakeAffineMatrix(scales[0], rotates[0], translates[0]);
+		Matrix4x4 localElbowMatrix = MakeAffineMatrix(scales[1], rotates[1], translates[1]);
+		Matrix4x4 localHandMatrix = MakeAffineMatrix(scales[2], rotates[2], translates[2]);
 
+		Matrix4x4 worldShoulderMatrix = localShoulderMatrix;
+		Matrix4x4 worldElbowMatrix = Multiply(localElbowMatrix, localShoulderMatrix);
+		Matrix4x4 worldHandMatrix = Multiply(Multiply(localHandMatrix, localElbowMatrix), localShoulderMatrix);
 
+		Sphere shoulder{
 
+			Vector3{
+				worldShoulderMatrix.m[3][0],
+				worldShoulderMatrix.m[3][1],
+				worldShoulderMatrix.m[3][2]
+			},
+			0.1f,
 
+		};
+
+		Sphere elbow{
+
+			Vector3{
+				worldElbowMatrix.m[3][0],
+				worldElbowMatrix.m[3][1],
+				worldElbowMatrix.m[3][2]
+			},
+			0.1f,
+
+		};
+
+		Sphere hand{
+
+			Vector3{
+				worldHandMatrix.m[3][0],
+				worldHandMatrix.m[3][1],
+				worldHandMatrix.m[3][2]
+			},
+			0.1f,
+
+		};
 
 
 
@@ -97,12 +153,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (ImGui::CollapsingHeader("controlPoint", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::DragFloat3("controlPoint[0]", &controlPoints[0].x, 0.01f);
-			ImGui::DragFloat3("controlPoint[1]", &controlPoints[1].x, 0.01f);
-			ImGui::DragFloat3("controlPoint[2]", &controlPoints[2].x, 0.01f);
-			
+
+			ImGui::DragFloat3("scalea[0]", &scales[0].x, 0.01f);
+			ImGui::DragFloat3("rotates[0]", &rotates[0].x, 0.01f);
+			ImGui::DragFloat3("translates[0]", &translates[0].x, 0.01f);
+
 		}
-		
+
 		ImGui::End();
 
 		if (keys[DIK_SPACE]) {
@@ -143,9 +200,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
+		DrawSphere(shoulder, viewprojectionMatrix, viewportMatrix, RED);
+		DrawSphere(elbow, viewprojectionMatrix, viewportMatrix, GREEN);
+		DrawSphere(hand, viewprojectionMatrix, viewportMatrix, BLUE);
 
-		DrowBezier(controlPoints[0], controlPoints[1], controlPoints[2], viewprojectionMatrix, viewportMatrix, WHITE);
 		
+
+
 
 		///
 		/// ↑描画処理ここまで
