@@ -11,6 +11,8 @@ Vector3 operator/(const Vector3& v, float s) { return Multiply(v, 1.0f / s); }
 Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) { return Add(m1, m2); }
 Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) { return Subtract(m1, m2); }
 Matrix4x4 operator* (const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1, m2); }
+Vector3 operator-(const Vector3& v); 
+Vector3 operator+(const Vector3& v);
 
 
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate)

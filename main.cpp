@@ -3,6 +3,7 @@
 #include"RenderingPipeline.h"
 #include "imgui.h"
 #include "Vector2.h"
+#include "Vector3.h"
 
 
 const char kWindowTitle[] = "学籍番号";
@@ -71,6 +72,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{1.0f, 1.0f, 1.0f},
 		{1.0f, 1.0f, 1.0f}
 	};
+
+
+	Vector3 a{ 0.2f, 1.0f, 0.0f };
+	Vector3 b{ 2.4f, 3.1f, 1.2f };
+	Vector3 c = a + b;
+	Vector3 d = a - b;
+	Vector3 e = a * 2.4f;
+	Vector3 rotate{ 0.4f, 1.43f, -0.8f };
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+	Matrix4x4 rotateMatrix = rotateXMatrix * rotateYMatrix * rotateZMatrix;
+
 
 	int  MousePosX;
 	int  MousePosY;
@@ -144,33 +158,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		ImGui::Begin("Window");
-		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
-			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
-		}
-
-
-		if (ImGui::CollapsingHeader("controlPoint", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			
-			ImGui::DragFloat3("scalea[0]", &scales[0].x, 0.01f);
-			ImGui::DragFloat3("rotates[0]", &rotates[0].x, 0.01f);
-			ImGui::DragFloat3("translates[0]", &translates[0].x, 0.01f);
-
-			ImGui::DragFloat3("scalea[1]", &scales[1].x, 0.01f);
-			ImGui::DragFloat3("rotates[1]", &rotates[1].x, 0.01f);
-			ImGui::DragFloat3("translates[1]", &translates[1].x, 0.01f);
-
-			ImGui::DragFloat3("scalea[2]", &scales[2].x, 0.01f);
-			ImGui::DragFloat3("rotates[2]", &rotates[2].x, 0.01f);
-			ImGui::DragFloat3("translates[2]", &translates[2].x, 0.01f);
-
-
-
-		}
-
+		ImGui::Text("c: %f, %f, %f", c.x, c.y, c.z);
+		ImGui::Text("d: %f, %f, %f", d.x, d.y, d.z);
+		ImGui::Text("e: %f, %f, %f", e.x, e.y, e.z);
+		ImGui::Text("matrix: \n%f, %f, %f, %f \n%f, %f, %f, %f \n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3],
+			rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3],
+			rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
+			rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
 		ImGui::End();
+
+	
 
 		if (keys[DIK_SPACE]) {
 			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
@@ -244,12 +242,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		DrawSphere(shoulder, viewprojectionMatrix, viewportMatrix, RED);
-		DrawSphere(elbow, viewprojectionMatrix, viewportMatrix, GREEN);
-		DrawSphere(hand, viewprojectionMatrix, viewportMatrix, BLUE);
-		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
-		Novice::DrawLine((int)start2.x, (int)start2.y, (int)end2.x, (int)end2.y, WHITE);
-
+		
 
 
 		///
