@@ -153,10 +153,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (ImGui::CollapsingHeader("controlPoint", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-
+			
 			ImGui::DragFloat3("scalea[0]", &scales[0].x, 0.01f);
 			ImGui::DragFloat3("rotates[0]", &rotates[0].x, 0.01f);
 			ImGui::DragFloat3("translates[0]", &translates[0].x, 0.01f);
+
+			ImGui::DragFloat3("scalea[1]", &scales[1].x, 0.01f);
+			ImGui::DragFloat3("rotates[1]", &rotates[1].x, 0.01f);
+			ImGui::DragFloat3("translates[1]", &translates[1].x, 0.01f);
+
+			ImGui::DragFloat3("scalea[2]", &scales[2].x, 0.01f);
+			ImGui::DragFloat3("rotates[2]", &rotates[2].x, 0.01f);
+			ImGui::DragFloat3("translates[2]", &translates[2].x, 0.01f);
+
+
 
 		}
 
@@ -198,13 +208,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 
+		Vector3 start = TransformVector3(TransformVector3(
+			Vector3{
+				worldShoulderMatrix.m[3][0],
+				worldShoulderMatrix.m[3][1],
+				worldShoulderMatrix.m[3][2]
+			},  
+			viewprojectionMatrix), viewportMatrix);
+
+		Vector3 end = TransformVector3(TransformVector3(
+			Vector3{
+				worldElbowMatrix.m[3][0],
+				worldElbowMatrix.m[3][1],
+				worldElbowMatrix.m[3][2]
+			}, 
+			viewprojectionMatrix), viewportMatrix);
+
+
+		Vector3 start2 = TransformVector3(TransformVector3(
+			Vector3{
+				worldElbowMatrix.m[3][0],
+				worldElbowMatrix.m[3][1],
+				worldElbowMatrix.m[3][2]
+			},
+			viewprojectionMatrix), viewportMatrix);
+
+		Vector3 end2 = TransformVector3(TransformVector3(
+			Vector3{
+				worldHandMatrix.m[3][0],
+				worldHandMatrix.m[3][1],
+				worldHandMatrix.m[3][2]
+			},
+			viewprojectionMatrix), viewportMatrix);
+
+
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
 		DrawSphere(shoulder, viewprojectionMatrix, viewportMatrix, RED);
 		DrawSphere(elbow, viewprojectionMatrix, viewportMatrix, GREEN);
 		DrawSphere(hand, viewprojectionMatrix, viewportMatrix, BLUE);
-
-		
+		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
+		Novice::DrawLine((int)start2.x, (int)start2.y, (int)end2.x, (int)end2.y, WHITE);
 
 
 
