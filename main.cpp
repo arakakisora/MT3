@@ -95,14 +95,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Ball ball{};
 	ball.position = { 0.0f, 0.0f, 0.0f };
 	ball.mass = 2.0f;
-	ball.radius = 0.5f;
+	ball.radius = 0.1f;
 	ball.color = BLUE;
+	ball.acceleration = { 0.0f,-9.8f,0.0f };
 
 	float deltaTime = 1.0f / 60.0f;
 	//float length = 0;// Length(diff);
 
-	float angularVelocity = 0.0f;
-	float angle = 0.0f;
+	//float angularVelocity = 0.0f;
+	//float angle = 0.0f;
 
 	int  MousePosX;
 	int  MousePosY;
@@ -131,51 +132,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
 		
-		angle += angularVelocity * deltaTime;
-		sphere1.center = {ball.position.x+ball.radius*cosf(angle),ball.position.y+ball.radius*sinf(angle),0};
+		
+		ball.velocity = ball.velocity+ball.acceleration * deltaTime;
+		ball.position = ball.position + ball.velocity * deltaTime;
+		if (IsCollision(Sphere{ ball.position,ball.radius }, plane)) {
+
+			Vector3 reflected = Reflect(ball.velocity, plane.normal);
+			Vector3 projecToNormal = Project(ball.velocity, plane.normal);
+			Vector3 movingDirection = reflected - projecToNormal;
+			ball.velocity = projecToNormal * e + movingDirection;
 
 
 
+
+		}
 
 
 
 		ImGui::Begin("Window");
 		if (ImGui::Button("start")) {
-			angularVelocity = 3.14f;
+			
 
 		}
+
 
 		ImGui::End();
 
 	
 
-		if (keys[DIK_SPACE]) {
-			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
-
-				preMouse.x = (float)MousePosX;
-				preMouse.y = (float)MousePosY;
-				precamera = cameraTransform;
-
-			}
-			Vector2 dist;
-			dist.x = preMouse.x - (float)MousePosX;
-			dist.y = preMouse.y - (float)MousePosY;
-			dist.y *= -1;
-			if (Novice::IsPressMouse(2)) {
-
-				cameraTransform.translate.x = precamera.translate.x + (float)dist.x * 0.001f;
-				cameraTransform.translate.y = ((precamera.translate.y + (float)dist.y * 0.001f));
-
-			}
-
-			cameraTransform.translate.z += Novice::GetWheel() * 0.001f;
-			if (Novice::IsPressMouse(0)) {
-
-				cameraTransform.rotate.y = precamera.rotate.y + (float)dist.x * 0.001f;
-				cameraTransform.rotate.x = precamera.rotate.x + (float)dist.y * 0.001f;
-
-			}
-		}
+		
 
 		///
 		/// ↑更新処理ここまで
@@ -186,9 +171,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 
-		Vector3 start = TransformVector3(TransformVector3(Vector3{0,0,0}, viewprojectionMatrix), viewportMatrix);
-
-		Vector3 end = TransformVector3(TransformVector3(ball.position,viewprojectionMatrix), viewportMatrix);
+		
 
 
 		
@@ -196,8 +179,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		DrawSphere(sphere1, viewprojectionMatrix, viewportMatrix, WHITE);
-
+		DrawSphere(Sphere{ ball.position,ball.radius }, viewprojectionMatrix, viewportMatrix, WHITE);
+		DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで

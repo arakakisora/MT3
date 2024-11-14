@@ -81,6 +81,7 @@ struct AABB {
 Vector3 operator+(const Vector3& v1, const Vector3& v2);
 Vector3 operator-(const Vector3& v1, const Vector3& v2);
 Vector3 operator*(float s, const Vector3& v);
+Vector3 operator*(const Vector3& v1, const Vector3& v);
 Vector3 operator*(const Vector3& v, float s);
 Vector3 operator/(const Vector3& v, float s);
 Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
@@ -167,3 +168,7 @@ void DroawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const
 void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 void DrowBezier(const Vector3& controlPint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
+
+//ヴェクトルを求める関数
+Vector3 Reflect(const Vector3& input, const Vector3& normal);

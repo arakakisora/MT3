@@ -7,6 +7,13 @@ Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
 Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
 Vector3 operator*(float s, const Vector3& v) { return Multiply(v, s); }
 Vector3 operator*(const Vector3& v, float s) { return s * v; }
+
+Vector3 operator*(const Vector3& v1, const Vector3& v) {
+
+	return Multiply(v1, v);
+
+}
+
 Vector3 operator/(const Vector3& v, float s) { return Multiply(v, 1.0f / s); }
 Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) { return Add(m1, m2); }
 Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) { return Subtract(m1, m2); }
@@ -882,6 +889,12 @@ void DrowBezier(const Vector3& controlPint0, const Vector3& controlPoint1, const
 
 
 }
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal)
+ {
+	return input - 2 * Dot(input, normal) * normal;
+}
+
 
 
 
