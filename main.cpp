@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const int32_t kClientHeight = 720;
 	Transform transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f} ,{0.0f,0.0f,0.0f} };
 	Transform cameraTransform = { {1.0f,1.0f,1.0f},{0.26f,0.0f,0.0f} ,{ 0.0f,1.9f,-6.49f} };
-	Sphere sphere1{ 0.0f,0.0f,1.0f, 1 };
+	Sphere sphere1{ 0.0f,0.0f,1.0f, 0.1f };
 	Sphere sphere2{ 1.0f,0.0f,1.0f, 0.5 };
 
 	Segment segment{ {-0.7f,0.3f,0.0f},{2.0f,-0.5f,0.0f} };
@@ -93,18 +93,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spring.dampingCoefficent = 2.0f;
 
 	Ball ball{};
-	ball.position = { 1.2f, 0.0f, 0.0f };
+	ball.position = { 0.0f, 3.0f, 0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
+	ball.acceleration = { 0.0f,-5.8f,0.0f };
 
 	float deltaTime = 1.0f / 60.0f;
-	float length = 0;// Length(diff);
+	//float length = 0;// Length(diff);
+
+	//float angularVelocity = 0.0f;
+	//float angle = 0.0f;
 
 	int  MousePosX;
 	int  MousePosY;
 	Vector2 preMouse = { 0 };
 	Transform precamera = { 0 };
+	bool furag=false;
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -127,71 +132,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewprojectionMatrix = Multiply(viewMatrix, projectionMatrix);
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kClientWindth), float(kClientHeight), 0.0f, 1.0f);
 
+		
+		if (furag) { ball.velocity = ball.velocity + ball.acceleration * deltaTime; };
+		
+		ball.position = ball.position + ball.velocity * deltaTime;
+		if (IsCollision(Sphere{ ball.position,ball.radius }, plane)) {
+
+			Vector3 reflected = Reflect(ball.velocity, plane.normal);
+			Vector3 projecToNormal = Project(ball.velocity, plane.normal);
+			Vector3 movingDirection = reflected - projecToNormal;
+			ball.velocity = projecToNormal * e + movingDirection;
 
 
-		Vector3 diff = ball.position - spring.anchor;
-	
 
-		if (preKeys[DIK_SPACE] == 0 && keys[DIK_SPACE] != 0) {
-			
+
 		}
-
-		if (length != 0.0f)
-		{
-			Vector3 direction = Normaraize(diff);
-			Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
-			Vector3 displacement = length * (ball.position - restPosition);
-			Vector3 restoringFore = -spring.stiffness * displacement;
-			Vector3 dampingForce = -spring.dampingCoefficent * ball.velocity;
-			Vector3 force = restoringFore+dampingForce;
-			ball.acceleration = force / ball.mass;
-			
-		}
-
-		// 次の処理を追加
-		ball.velocity += ball.acceleration * deltaTime;
-		ball.position += ball.velocity * deltaTime;
-
-
-
 
 
 
 		ImGui::Begin("Window");
 		if (ImGui::Button("start")) {
-			length = Length(diff);
+			
+			furag = true;
+		}
+
+		// 項目2
+		if (ImGui::CollapsingHeader("Object2", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("plane.Normal", &plane.normal.x, 0.01f);
+			ImGui::DragFloat("plane.Distance", &plane.distance, 0.01f);
+
+			plane.normal = Normaraize(plane.normal);
+
 		}
 
 		ImGui::End();
 
 	
 
-		if (keys[DIK_SPACE]) {
-			if (Novice::IsTriggerMouse(2) || Novice::IsTriggerMouse(0)) {
-
-				preMouse.x = (float)MousePosX;
-				preMouse.y = (float)MousePosY;
-				precamera = cameraTransform;
-
-			}
-			Vector2 dist;
-			dist.x = preMouse.x - (float)MousePosX;
-			dist.y = preMouse.y - (float)MousePosY;
-			dist.y *= -1;
-			if (Novice::IsPressMouse(2)) {
-
-				cameraTransform.translate.x = precamera.translate.x + (float)dist.x * 0.001f;
-				cameraTransform.translate.y = ((precamera.translate.y + (float)dist.y * 0.001f));
-
-			}
-			cameraTransform.translate.z += Novice::GetWheel() * 0.001f;
-			if (Novice::IsPressMouse(0)) {
-
-				cameraTransform.rotate.y = precamera.rotate.y + (float)dist.x * 0.001f;
-				cameraTransform.rotate.x = precamera.rotate.x + (float)dist.y * 0.001f;
-
-			}
-		}
+		
 
 		///
 		/// ↑更新処理ここまで
@@ -202,9 +181,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 
-		Vector3 start = TransformVector3(TransformVector3(Vector3{0,0,0}, viewprojectionMatrix), viewportMatrix);
-
-		Vector3 end = TransformVector3(TransformVector3(ball.position,viewprojectionMatrix), viewportMatrix);
+		
 
 
 		
@@ -212,9 +189,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DrawGrid(worldviewprojectionMatrix, viewportMatrix);
-		DrawSphere(Sphere{ ball.position ,0.1f }, viewprojectionMatrix, viewportMatrix, BLUE);
-		Novice::DrawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, WHITE);
-
+		DrawSphere(Sphere{ ball.position,ball.radius }, viewprojectionMatrix, viewportMatrix, WHITE);
+		DroawPlane(plane, viewprojectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで
